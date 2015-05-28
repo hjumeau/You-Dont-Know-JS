@@ -38,12 +38,12 @@ In traditional compiled-language process, a chunk of source code, your program, 
    > Transforme une liste de tokens en arbre d'élements imbriqués, qui vont représenter la structure grammaticale du programme. 
 
   The tree for `var a = 2;` might start with a top-level node called `VariableDeclaration`, with a child node called `Identifier` (whose value is `a`), and another child called `AssignmentExpression` which itself has a child called `NumericLiteral` (whose value is `2`).
-    
-    > VariableDeclaration |
+    ```
+      VariableDeclaration |
     			  |_ Identifier ('a')
     			  |_ AssignmentExpression |
     			  		          |_ NumericLiteral (2)
-
+	```
 
 3. **Code-Generation:** the process of taking an AST and turning it into executable code. This part varies greatly depending on the language, the platform it's targeting, etc.
 
