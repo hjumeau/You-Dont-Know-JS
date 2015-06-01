@@ -48,6 +48,8 @@ In traditional compiled-language process, a chunk of source code, your program, 
 3. **Code-Generation:** the process of taking an AST and turning it into executable code. This part varies greatly depending on the language, the platform it's targeting, etc.
 
     So, rather than get mired in details, we'll just handwave and say that there's a way to take our above described AST for `var a = 2;` and turn it into a set of machine instructions to actually *create* a variable called `a` (including reserving memory, etc.), and then store a value into `a`.
+    
+    > ce processus transforme les AST en code machine (low level). Le code machine dépend beaucoup de moteur javascript utilisé.
 
     **Note:** The details of how the engine manages system resources are deeper than we will dig, so we'll just take it for granted that the engine is able to create and store variables as needed.
 
@@ -57,9 +59,13 @@ So, I'm painting only with broad strokes here. But I think you'll see shortly wh
 
 For one thing, JavaScript engines don't get the luxury (like other language compilers) of having plenty of time to optimize, because JavaScript compilation doesn't happen in a build step ahead of time, as with other languages.
 
+> la compilation javascript ne peut pas ce permettre beaucoup d'optimisation car, il ne dispose pas d'étape intermédiaire avant l'execution (en comparaison avec d'autre language…). Il dispose de peu de temps pour éffectuer la compilation.
+
 For JavaScript, the compilation that occurs happens, in many cases, mere microseconds (or less!) before the code is executed. To ensure the fastest performance, JS engines use all kinds of tricks (like JITs, which lazy compile and even hot re-compile, etc.) which are well beyond the "scope" of our discussion here.
 
 Let's just say, for simplicity's sake, that any snippet of JavaScript has to be compiled before (usually *right* before!) it's executed. So, the JS compiler will take the program `var a = 2;` and compile it *first*, and then be ready to execute it, usually right away.
+
+> Le code Javascript est compilé avant d'être exécuter 
 
 ## Understanding Scope
 
@@ -70,10 +76,16 @@ The way we will approach learning about scope is to think of the process in term
 Let's meet the cast of characters that interact to process the program `var a = 2;`, so we understand their conversations that we'll listen in on shortly:
 
 1. *Engine*: responsible for start-to-finish compilation and execution of our JavaScript program.
+    
+	> le moteur javascript : lance la compilation du programme Javascript et execute le code machine.  
 
 2. *Compiler*: one of *Engine*'s friends; handles all the dirty work of parsing and code-generation (see previous section).
 
+	> responsable de toute les étapes de la compilation
+
 3. *Scope*: another friend of *Engine*; collects and maintains a look-up list of all the declared identifiers (variables), and enforces a strict set of rules as to how these are accessible to currently executing code.
+
+	> liste les variables et défini des règles d'accès en fonction du code en exécution.
 
 For you to *fully understand* how JavaScript works, you need to begin to *think* like *Engine* (and friends) think, ask the questions they ask, and answer those questions the same.
 
@@ -97,6 +109,10 @@ If *Engine* eventually finds a variable, it assigns the value `2` to it. If not,
 
 To summarize: two distinct actions are taken for a variable assignment: First, *Compiler* declares a variable (if not previously declared in the current scope), and second, when executing, *Engine* looks up the variable in *Scope* and assigns to it, if found.
 
+ > Comment le Moteur, le Compilateur, et le Scope communique? 
+ > Tout d'abord, le compileur déclare une variable, si elle n'existe pas déja dans le scope.
+ > Ensuite, lors de l'exécution, le moteur cherche la variable dans le Scope et lui assigne une valeur.
+
 ### Compiler Speak
 
 We need a little bit more compiler terminology to proceed further with understanding.
@@ -105,9 +121,15 @@ When *Engine* executes the code that *Compiler* produced for step (2), it has to
 
 In our case, it is said that *Engine* would be performing an "LHS" look-up for the variable `a`. The other type of look-up is called "RHS".
 
+> Le moteur effectu different type de recherche dans le scope : LHS ou RHS.
+
 I bet you can guess what the "L" and "R" mean. These terms stand for "Left-hand Side" and "Right-hand Side".
 
 Side... of what? **Of an assignment operation.**
+
+> LHS et RHS signifie -> à Gauche de l'opération d'assignement ou à Droit de l'opération d'assignement.
+> Dans les fait RHS signifi surtout : pas à Gauche de l'opération d'assignement. Retrieve His/Her Source ou 'go 
+>  get the value of'
 
 In other words, an LHS look-up is done when a variable appears on the left-hand side of an assignment operation, and an RHS look-up is done when a variable appears on the right-hand side of an assignment operation.
 
@@ -134,6 +156,8 @@ a = 2;
 The reference to `a` here is an LHS reference, because we don't actually care what the current value is, we simply want to find the variable as a target for the `= 2` assignment operation.
 
 **Note:** LHS and RHS meaning "left/right-hand side of an assignment" doesn't necessarily literally mean "left/right side of the `=` assignment operator". There are several other ways that assignments happen, and so it's better to conceptually think about it as: "who's the target of the assignment (LHS)" and "who's the source of the assignment (RHS)".
+
+> LHS -> Quel est la cible de mon assignement ? RHS -> Quel est la source de mon assignement ?
 
 Consider this program, which has both LHS and RHS references:
 
@@ -162,11 +186,11 @@ However, the subtle but important difference is that *Compiler* handles both the
 ### Engine/Scope Conversation
 
 ```js
-function foo(a) {
+function foo(a) { // une LHS, on assigne implicitement au paramètre a la valeur de 2.
 	console.log( a ); // 2
 }
 
-foo( 2 );
+foo( 2 ); // une RHS, exécuter la fonction foo, le moteur va chercher la déclaration de cett fonction
 ```
 
 Let's imagine the above exchange (which processes this code snippet) as a conversation. The conversation would go a little something like this:
@@ -279,13 +303,20 @@ When the RHS look-up occurs for `b` the first time, it will not be found. This i
 
 If an RHS look-up fails to ever find a variable, anywhere in the nested *Scope*s, this results in a `ReferenceError` being thrown by the *Engine*. It's important to note that the error is of the type `ReferenceError`.
 
+> Quand le moteur ne trouve pas la variable référencé dans la chaine de scope, il renvoit une erreur de type >'ReferenceError'
+
 By contrast, if the *Engine* is performing an LHS look-up, and it arrives at the top floor (global *Scope*) without finding it, if the program is not running in "Strict Mode" [^note-strictmode], then the global *Scope* will create a new variable of that name **in the global scope**, and hand it back to *Engine*.
+
+> À contrario, quand le moteur doit assigner une valeur à une variable qui ne retrouve pas dans la chaine de scope > , alors il crée cette variable (uniquement quand le mode strict n'est pas activé) 
 
 *"No, there wasn't one before, but I was helpful and created one for you."*
 
 "Strict Mode" [^note-strictmode], which was added in ES5, has a number of different behaviors from normal/relaxed/lazy mode. One such behavior is that it disallows the automatic/implicit global variable creation. In that case, there would be no global *Scope*'d variable to hand back from an LHS look-up, and *Engine* would throw a `ReferenceError` similarly to the RHS case.
 
 Now, if a variable is found for an RHS look-up, but you try to do something with its value that is impossible, such as trying to execute-as-function a non-function value, or reference a property on a `null` or `undefined` value, then *Engine* throws a different kind of error, called a `TypeError`.
+
+> Quand on souhaite utiliser une variable qui à pour valeur null ou undefined ou exécuter une variable qui n'est 
+> pas une fonction, alors le moteur lance une TypeError.
 
 `ReferenceError` is *Scope* resolution-failure related, whereas `TypeError` implies that *Scope* resolution was successful, but that there was an illegal/impossible action attempted against the result.
 
@@ -294,6 +325,8 @@ Now, if a variable is found for an RHS look-up, but you try to do something with
 Scope is the set of rules that determines where and how a variable (identifier) can be looked-up. This look-up may be for the purposes of assigning to the variable, which is an LHS (left-hand-side) reference, or it may be for the purposes of retrieving its value, which is an RHS (right-hand-side) reference.
 
 LHS references result from assignment operations. *Scope*-related assignments can occur either with the `=` operator or by passing arguments to (assign to) function parameters.
+
+> Une LHS est effectué quand on utilise l'opérateur = ou quand on passe un argument a une fonction via (param).
 
 The JavaScript *Engine* first compiles code before it executes, and in so doing, it splits up statements like `var a = 2;` into two separate steps:
 
