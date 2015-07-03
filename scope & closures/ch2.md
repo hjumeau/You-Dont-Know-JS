@@ -15,6 +15,8 @@ It is this concept which provides the foundation to understand what lexical scop
 
 To define it somewhat circularly, lexical scope is scope that is defined at lexing time. In other words, lexical scope is based on where variables and blocks of scope are authored, by you, at write time, and thus is (mostly) set in stone by the time the lexer processes your code.
 
+> Le scope(la portée) lexical est le scope qui est défini durant la phase de tokenizing. Le scope est basé sur l'endroit où les variables et les blocs de scopes sont rédigés, par vous, et est défini dans la pierre au moment où le lexer(programme responsable du processus de tokenizing) traite votre code.  
+
 **Note:** We will see in a little bit there are some ways to cheat lexical scope, thereby modifying it after the lexer has passed by, but these are frowned upon. It is considered best practice to treat lexical scope as, in fact, lexical-only, and thus entirely author-time in nature.
 
 Let's consider this block of code:
