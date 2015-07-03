@@ -76,6 +76,9 @@ window.a
 
 This technique gives access to a global variable which would otherwise be inaccessible due to it being shadowed. However, non-global shadowed variables cannot be accessed.
 
+> Cette technique permet d'accéder à une variable globale qui serait autrement inaccessible si elle est "shadowé".
+Les variables non globale ne sont plus accessible quand elles sont "shadowé".
+
 No matter *where* a function is invoked from, or even *how* it is invoked, its lexical scope is **only** defined by where the function was declared.
 
 The lexical scope look-up process *only* applies to first-class identifiers, such as the `a`, `b`, and `c`. If you had a reference to `foo.bar.baz` in a piece of code, the lexical scope look-up would apply to finding the `foo` identifier, but once it locates that variable, object property-access rules take over to resolve the `bar` and `baz` properties, respectively.
