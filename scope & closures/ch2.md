@@ -52,6 +52,8 @@ The bubble for `bar` is entirely contained within the bubble for `foo`, because 
 
 Notice that these nested bubbles are strictly nested. We're not talking about Venn diagrams where the bubbles can cross boundaries. In other words, no bubble for some function can simultaneously exist (partially) inside two other outer scope bubbles, just as no function can partially be inside each of two parent functions.
 
+> Notez que ces "bulles" imbriqués sont strictement imbriqués. Une "bulle" ne peut pas être imbriquée simultanément à l'intérieur de deux autres "bulles" parentes, tout comme une fonction ne peut être défini à l'intérieur de deux fonctions parentes.
+
 ### Look-ups
 
 The structure and relative placement of these scope bubbles fully explains to the *Engine* all the places it needs to look to find an identifier.
