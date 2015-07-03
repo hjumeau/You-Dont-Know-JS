@@ -83,6 +83,8 @@ No matter *where* a function is invoked from, or even *how* it is invoked, its l
 
 The lexical scope look-up process *only* applies to first-class identifiers, such as the `a`, `b`, and `c`. If you had a reference to `foo.bar.baz` in a piece of code, the lexical scope look-up would apply to finding the `foo` identifier, but once it locates that variable, object property-access rules take over to resolve the `bar` and `baz` properties, respectively.
 
+> Le processus de recherche du scope lexicale n'est appliqué qu'aux premiers identifant de classe, comme a, b et c. Si vous faite reference à "foo.bar.baz" dans votre code, le lexicale scope cherchera uniquement l'identifiant de "foo", mais une fois la l'identifiant localisée, les règles d'accèss au propriété d'un objet prennent le relai pour obtenir les valeurs de "bar" et de "baz". 
+
 ## Cheating Lexical
 
 If lexical scope is defined only by where a function is declared, which is entirely an author-time decision, how could there possibly be a way to "modify" (aka, cheat) lexical scope at run-time?
