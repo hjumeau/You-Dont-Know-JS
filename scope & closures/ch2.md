@@ -64,7 +64,9 @@ Had there been a `c` both inside of `bar(..)` and inside of `foo(..)`, the `cons
 
 **Scope look-up stops once it finds the first match**. The same identifier name can be specified at multiple layers of nested scope, which is called "shadowing" (the inner identifier "shadows" the outer identifier). Regardless of shadowing, scope look-up always starts at the innermost scope being executed at the time, and works its way outward/upward until the first match, and stops.
 
-> Le même nom de variable(d'identifiant) peut être spécifié dans plusieurs couches d'imbrication de scope, cela s'appel le "shadowing" (l'identifiant interne (de l'engine) "shadows" de variable externe). À l'excution un scope commence toujours par rechercher un identifiant dans le scope le plus profond, et procède de la façon suivante: Je remonte l'imbrication de scope jusqu'a ce que je trouve l'identifiant qui correspond, et puis j'arrête.  
+> Cas de la variable C : La même variable(d'identifiant) peut être spécifié dans plusieurs couches d'imbrication de scope, cela s'appel le "shadowing" (l'identifiant interne est "l'ombre" de l'identifiant externe). 
+
+> À l'excution un scope commence toujours par rechercher un identifiant dans le scope le plus profond, et procède de la façon suivante: Je remonte l'imbrication de scope jusqu'a ce que je trouve l'identifiant qui correspond, et puis j'arrête.  
 
 **Note:** Global variables are also automatically properties of the global object (`window` in browsers, etc.), so it *is* possible to reference a global variable not directly by its lexical name, but instead indirectly as a property reference of the global object.
 
