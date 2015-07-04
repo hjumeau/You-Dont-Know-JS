@@ -217,20 +217,33 @@ It is a strange sort of mind-bending thought to see `with` turning, at runtime, 
 
 Both `eval(..)` and `with` cheat the otherwise author-time defined lexical scope by modifying or creating new lexical scope at runtime.
 
+> "eval()" et "with" changent le scope lexical defini à la compilation, en modifiant ou en créant un nouveau scope lexical à l'exécution.
+
 So, what's the big deal, you ask? If they offer more sophisticated functionality and coding flexibility, aren't these *good* features? **No.**
 
+> Ce ne sont pas de bonnes fonctionnalitées!
+
 The JavaScript *Engine* has a number of performance optimizations that it performs during the compilation phase. Some of these boil down to being able to essentially statically analyze the code as it lexes, and pre-determine where all the variable and function declarations are, so that it takes less effort to resolve identifiers during execution.
+
+> Le moteur JavaScript a de nombreuses optimisations de performance qui interviennent durant le phase de compilation. Certaines d'entre eux ont pour seul responsabilité d'analyser statiquement le code compilé, et de pré-déterminer où sont stocké toutes les variables et déclarations de fonction, pour facilité leurs recherches lors de l'exécution.  
 
 But if the *Engine* finds an `eval(..)` or `with` in the code, it essentially has to *assume* that all its awareness of identifier location may be invalid, because it cannot know at lexing time exactly what code you may pass to `eval(..)` to modify the lexical scope, or the contents of the object you may pass to `with` to create a new lexical scope to be consulted.
 
 In other words, in the pessimistic sense, most of those optimizations it *would* make are pointless if `eval(..)` or `with` are present, so it simply doesn't perform the optimizations *at all*.
 
+> La plupart des optimisations du moteur JS pourrait être inutile en présence d'un "eval()" ou d'un "with", alors le moteur ne fait tout simplement pas ces optimisations.
+
+
 Your code will almost certainly tend to run slower simply by the fact that you include an `eval(..)` or `with` anywhere in the code. No matter how smart the *Engine* may be about trying to limit the side-effects of these pessimistic assumptions, **there's no getting around the fact that without the optimizations, code runs slower.**
+
+> Il n'y a aucun doute que sans ces optimisations, le code fonctionne plus lentement.
 
 ## Review (TL;DR)
 
 Lexical scope means that scope is defined by author-time decisions of where functions are declared. The lexing phase of compilation is essentially able to know where and how all identifiers are declared, and thus predict how they will be looked-up during execution.
 
 Two mechanisms in JavaScript can "cheat" lexical scope: `eval(..)` and `with`. The former can modify existing lexical scope (at runtime) by evaluating a string of "code" which has one or more declarations in it. The latter essentially creates a whole new lexical scope (again, at runtime) by treating an object reference *as* a "scope" and that object's properties as scoped identifiers.
+
+> "with" crée tout simplement un nouvel ensemble d'objet lexical (encore à l'éxécution), en traitant une réference d'objet comme un scope et ses propriétés comme des identifiants(variable). 
 
 The downside to these mechanisms is that it defeats the *Engine*'s ability to perform compile-time optimizations regarding scope look-up, because the *Engine* has to assume pessimistically that such optimizations will be invalid. Code *will* run slower as a result of using either feature. **Don't use them.**
